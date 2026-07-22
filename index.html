@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt" class="notranslate" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<title>Origem — Preços de Matérias-Primas Africanas</title>
+<meta name="description" content="Origem: comparativo de preços oficiais de matérias-primas agrícolas africanas — produtor, exportação e a diferença entre os dois.">
+<meta property="og:title" content="Origem — Preços de Matérias-Primas Africanas">
+<meta property="og:description" content="O preço real, direto da fonte, antes dos intermediários.">
+<meta property="og:type" content="website"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#14161A; --bg2:#1B1E24; --line:#2A2E36;
+    --export:#C9902F; --produtor:#7A9B76; --gap:#C15B4E;
+    --text:#EDEDE9; --muted:#9AA0AC;
+  }
+  body{background:var(--bg); color:var(--text); font-family:'Bricolage Grotesque',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .card{background:var(--bg2); border:1px solid var(--line);}
+  .bar-track{background:#2A2E36;}
+  .bar-produtor{background:linear-gradient(90deg,#5C7A58,var(--produtor));}
+  .bar-export{background:linear-gradient(90deg,var(--export),#E0B15E);}
+  .chip{border:1px solid var(--line); transition:.15s;}
+  .chip.active{background:var(--export); border-color:var(--export); color:#14161A; font-weight:600;}
+  .lang-btn{color:var(--muted); border:1px solid var(--line);}
+  .lang-btn.active{background:var(--text); color:var(--bg); border-color:var(--text); font-weight:600;}
+  ::selection{background:var(--export); color:#14161A;}
+  .fade-in{animation:fadeIn .4s ease both;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
+  @media (prefers-reduced-motion: reduce){ .fade-in{animation:none} }
+</style>
+</head>
+<body class="min-h-screen antialiased">
+
+  <header class="border-b border-[var(--line)] px-5 pt-8 pb-5 max-w-2xl mx-auto">
+    <div class="flex items-center justify-between mb-1">
+      <p class="text-xl font-extrabold tracking-tight" style="color:var(--export)">ORIGEM</p>
+      <div class="flex gap-1 shrink-0" id="langSwitch">
+        <button data-lang="pt" class="lang-btn mono text-[11px] px-2 py-1 rounded-md">PT</button>
+        <button data-lang="en" class="lang-btn mono text-[11px] px-2 py-1 rounded-md">EN</button>
+        <button data-lang="fr" class="lang-btn mono text-[11px] px-2 py-1 rounded-md">FR</button>
+        <button data-lang="zh" class="lang-btn mono text-[11px] px-2 py-1 rounded-md">中文</button>
+      </div>
+    </div>
+    <p class="mono text-[11px] tracking-[0.2em] text-[var(--muted)] uppercase mb-4" data-i18n="eyebrow">Fonte aberta &middot; dados oficiais</p>
+    <h1 class="text-3xl font-extrabold tracking-tight leading-tight" data-i18n="title">Quem paga mais pelo<br>que a África produz?</h1>
+    <p class="text-sm text-[var(--muted)] mt-3 leading-relaxed" data-i18n="subtitle">Preço pago ao produtor vs. preço de referência na exportação, por país e por produto — direto das fontes oficiais, sem intermediário.</p>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-5 py-6">
+
+    <!-- search -->
+    <div class="relative mb-4">
+      <input id="busca" type="text" data-i18n-placeholder="buscaPlaceholder" placeholder="Buscar produto ou país…"
+        class="w-full bg-[var(--bg2)] border border-[var(--line)] rounded-xl px-4 py-2.5 text-sm placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--export)]">
+    </div>
+
+    <!-- country filter -->
+    <div class="flex gap-2 overflow-x-auto pb-2 mb-3 no-scrollbar" id="filtrosPais">
+      <button data-pais="todos" class="chip active shrink-0 px-3 py-1.5 rounded-full text-xs mono" data-i18n="todos">Todos</button>
+    </div>
+
+    <!-- product filters -->
+    <div class="flex gap-2 overflow-x-auto pb-2 mb-3 no-scrollbar" id="filtros">
+      <button data-filtro="todos" class="chip active shrink-0 px-3 py-1.5 rounded-full text-xs mono" data-i18n="todos">Todos</button>
+    </div>
+
+    <!-- legend -->
+    <button id="legendaToggle" class="mono text-[10px] text-[var(--muted)] underline mb-4" data-i18n="verLegenda">Ver legenda</button>
+    <div id="legenda" class="hidden card rounded-xl p-4 mb-5 text-xs space-y-2">
+      <p class="flex items-center gap-2"><span class="inline-block w-6 h-1.5 rounded-full" style="background:var(--produtor)"></span> <span data-i18n="legProdutor">Preço pago ao produtor</span></p>
+      <p class="flex items-center gap-2"><span class="inline-block w-6 h-1.5 rounded-full" style="background:var(--export)"></span> <span data-i18n="legExport">Preço de referência à exportação</span></p>
+      <p class="flex items-center gap-2"><span class="inline-block w-6 h-1.5 rounded-full" style="background:var(--export);opacity:.55;background-image:repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(0,0,0,.3) 2px,rgba(0,0,0,.3) 4px)"></span> <span data-i18n="legEstimado">≈ Estimado (calculado a partir de um valor total, não é oficial)</span></p>
+      <p style="color:var(--produtor)" data-i18n="legOficial">🟢 Oficial &middot; <span style="color:var(--export)">🟡 Setorial</span> &middot; <span style="color:var(--muted)">⚪ Média</span></p>
+    </div>
+
+    <div id="lista" class="space-y-4"></div>
+
+    <p id="vazio" class="hidden text-center text-sm text-[var(--muted)] py-16" data-i18n="vazio">Nenhum dado para este produto ainda.</p>
+  </main>
+
+  <footer class="max-w-2xl mx-auto px-5 py-10 border-t border-[var(--line)] mt-6">
+    <p class="mono text-[10px] text-[var(--muted)] uppercase tracking-widest" data-i18n="footer">Atualizado manualmente a partir de fontes governamentais e setoriais &middot; precos.json</p>
+  </footer>
+
+<script>
+// ---------- i18n: interface texts ----------
+const I18N = {
+  pt: { eyebrow:"Fonte aberta · dados oficiais", title:"Quem paga mais pelo<br>que a África produz?",
+    subtitle:"Preço pago ao produtor vs. preço de referência na exportação, por país e por produto — direto das fontes oficiais, sem intermediário.",
+    todos:"Todos", vazio:"Nenhum dado para este produto ainda.", produtor:"Produtor", exportacao:"Exportação",
+    compradores:"Compradores", estatuto:"Estatuto", vendedores:"Vendedores/Produtores",
+    zona:"Zona de produção", estacaoLabel:"Época/Sazonalidade", transporte:"Transporte/Logística",
+    buscaPlaceholder:"Buscar produto ou país…",
+    verLegenda:"Ver legenda", legProdutor:"Preço pago ao produtor", legExport:"Preço de referência à exportação",
+    legEstimado:"≈ Estimado (calculado a partir de um valor total, não é oficial)",
+    legOficial:"🟢 Oficial · 🟡 Setorial · ⚪ Média",
+    footer:"Atualizado manualmente a partir de fontes governamentais e setoriais · precos.json", gapText:n=>`produtor recebe ${n}% do preço export` },
+  en: { eyebrow:"Open source · official data", title:"Who pays more for<br>what Africa produces?",
+    subtitle:"Farmgate price vs. export reference price, by country and product — straight from official sources, no middleman.",
+    todos:"All", vazio:"No data for this product yet.", produtor:"Farmgate", exportacao:"Export",
+    compradores:"Buyers", estatuto:"Status", vendedores:"Sellers/Producers",
+    zona:"Production zone", estacaoLabel:"Season/Timing", transporte:"Transport/Logistics",
+    buscaPlaceholder:"Search product or country…",
+    verLegenda:"Show legend", legProdutor:"Price paid to producer", legExport:"Export reference price",
+    legEstimado:"≈ Estimated (derived from a total value, not official)",
+    legOficial:"🟢 Official · 🟡 Sector · ⚪ Media",
+    footer:"Manually updated from government and sector sources · precos.json", gapText:n=>`producer gets ${n}% of export price` },
+  fr: { eyebrow:"Source ouverte · données officielles", title:"Qui paie le plus pour<br>ce que l'Afrique produit ?",
+    subtitle:"Prix payé au producteur vs. prix de référence à l'export, par pays et par produit — directement des sources officielles, sans intermédiaire.",
+    todos:"Tous", vazio:"Aucune donnée pour ce produit pour l'instant.", produtor:"Producteur", exportacao:"Export",
+    compradores:"Acheteurs", estatuto:"Statut", vendedores:"Vendeurs/Producteurs",
+    zona:"Zone de production", estacaoLabel:"Saison", transporte:"Transport/Logistique",
+    buscaPlaceholder:"Chercher un produit ou un pays…",
+    verLegenda:"Voir la légende", legProdutor:"Prix payé au producteur", legExport:"Prix de référence à l'export",
+    legEstimado:"≈ Estimé (calculé à partir d'une valeur totale, pas officiel)",
+    legOficial:"🟢 Officiel · 🟡 Sectoriel · ⚪ Média",
+    footer:"Mis à jour manuellement à partir de sources gouvernementales et sectorielles · precos.json", gapText:n=>`le producteur touche ${n}% du prix export` },
+  zh: { eyebrow:"开放数据 · 官方来源", title:"谁为非洲的产品<br>支付更高的价格？",
+    subtitle:"生产者价格 与 出口参考价格 对比，按国家和产品分类 — 直接来自官方数据来源，无中间商。",
+    todos:"全部", vazio:"该产品暂无数据。", produtor:"生产者价格", exportacao:"出口价格",
+    compradores:"买家", estatuto:"状态", vendedores:"卖家/生产商",
+    zona:"生产区域", estacaoLabel:"季节", transporte:"运输/物流",
+    buscaPlaceholder:"搜索产品或国家…",
+    verLegenda:"查看图例", legProdutor:"支付给生产者的价格", legExport:"出口参考价格",
+    legEstimado:"≈ 估算（根据总值计算，非官方数据）",
+    legOficial:"🟢 官方 · 🟡 行业 · ⚪ 媒体",
+    footer:"数据来自政府及行业官方来源，人工更新 · precos.json", gapText:n=>`生产者获得出口价格的 ${n}%` }
+};
+// Known product / country names — extend this if you add new ones later; unknown terms just show as typed in the JSON.
+const NAMES = {
+  "Castanha de caju": {en:"Cashew nuts", fr:"Noix de cajou", zh:"腰果"},
+  "Gergelim": {en:"Sesame", fr:"Sésame", zh:"芝麻"},
+  "Algodão": {en:"Cotton", fr:"Coton", zh:"棉花"},
+  "Açúcar": {en:"Sugar", fr:"Sucre", zh:"糖"},
+  "Tabaco": {en:"Tobacco", fr:"Tabac", zh:"烟草"},
+  "Feijão boer (pois d'Angole)": {en:"Pigeon pea", fr:"Pois d'Angole", zh:"木豆"},
+  "Camarão": {en:"Shrimp", fr:"Crevette", zh:"虾"},
+  "Gás natural": {en:"Natural gas", fr:"Gaz naturel", zh:"天然气"},
+  "Carvão mineral": {en:"Coal", fr:"Charbon", zh:"煤炭"},
+  "Alumínio": {en:"Aluminium", fr:"Aluminium", zh:"铝"},
+  "Grafite": {en:"Graphite", fr:"Graphite", zh:"石墨"},
+  "Rubis": {en:"Rubies", fr:"Rubis", zh:"红宝石"},
+  "Madeira": {en:"Timber", fr:"Bois", zh:"木材"},
+  "Ouro": {en:"Gold", fr:"Or", zh:"黄金"},
+  "Areias pesadas (titânio/zircão)": {en:"Heavy sands (titanium/zircon)", fr:"Sables lourds (titane/zircon)", zh:"重砂（钛/锆）"},
+  "Electricidade (Cahora Bassa)": {en:"Electricity (Cahora Bassa)", fr:"Électricité (Cahora Bassa)", zh:"电力（卡奥拉巴萨）"},
+  "Gado bovino (animais vivos)": {en:"Cattle (live animals)", fr:"Bétail (animaux vivants)", zh:"活牛"},
+  "Tântalo (tantalite)": {en:"Tantalum (tantalite)", fr:"Tantale (tantalite)", zh:"钽（钽铁矿）"},
+  "Farinha de trigo": {en:"Wheat flour", fr:"Farine de blé", zh:"小麦粉"},
+  "Citrinos": {en:"Citrus", fr:"Agrumes", zh:"柑橘"},
+  "Café (cereja)": {en:"Coffee (cherry)", fr:"Café (cerise)", zh:"咖啡（樱桃）"},
+  "Café (cereja verde)": {en:"Coffee (green cherry)", fr:"Café (cerise verte)", zh:"咖啡（绿樱桃）"},
+  "Chá": {en:"Tea", fr:"Thé", zh:"茶"},
+  "Milho": {en:"Maize", fr:"Maïs", zh:"玉米"},
+  "Moçambique": {en:"Mozambique", fr:"Mozambique", zh:"莫桑比克"},
+  "Burundi": {en:"Burundi", fr:"Burundi", zh:"布隆迪"},
+  "Tanzânia": {en:"Tanzania", fr:"Tanzanie", zh:"坦桑尼亚"},
+  "Zâmbia": {en:"Zambia", fr:"Zambie", zh:"赞比亚"},
+  "Ruanda": {en:"Rwanda", fr:"Rwanda", zh:"卢旺达"},
+  "África do Sul": {en:"South Africa", fr:"Afrique du Sud", zh:"南非"}
+};
+let LANG = "pt";
+let BUSCA = "";
+let PAIS_ATIVO = "todos";
+const tr = (key) => NAMES[key] ? (NAMES[key][LANG] || key) : key;
+
+function applyI18n(){
+  const dict = I18N[LANG];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(dict[k] && typeof dict[k]==='string') el.innerHTML = dict[k];
+  });
+  const busca = document.getElementById('busca');
+  if(busca && dict.buscaPlaceholder) busca.placeholder = dict.buscaPlaceholder;
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.lang===LANG);
+  });
+  document.documentElement.lang = LANG;
+}
+document.getElementById('langSwitch').addEventListener('click', e=>{
+  const btn = e.target.closest('.lang-btn'); if(!btn) return;
+  LANG = btn.dataset.lang; applyI18n();
+  buildFiltros(); buildFiltrosPais(); render();
+});
+
+const fmtUSD = n => n===null||n===undefined ? '—' : '$'+Number(n).toLocaleString('en-US');
+
+function cardHTML(d){
+  const temProdutor = d.preco_produtor_usd_kg !== null && d.preco_produtor_usd_kg !== undefined;
+  let temExport = d.preco_export !== null && d.preco_export !== undefined;
+  let exportPerKg = temExport ? d.preco_export/1000 : null;
+  let exportEstimado = false;
+
+  // Calculadora: se não há preço oficial mas há valor total + volume, calcula uma média (nunca um preço oficial)
+  if(!temExport && d.valor_total_usd && d.volume_toneladas){
+    exportPerKg = d.valor_total_usd / (d.volume_toneladas * 1000);
+    exportEstimado = true;
+    temExport = true;
+  }
+
+  const maxVal = Math.max(temProdutor?d.preco_produtor_usd_kg:0, exportPerKg||0, 0.1);
+  const produtorPct = temProdutor ? Math.max(6,(d.preco_produtor_usd_kg/maxVal)*100) : 0;
+  const exportPct = exportPerKg ? Math.max(6,(exportPerKg/maxVal)*100) : 0;
+
+  let gapBadge = '';
+  if(temProdutor && exportPerKg && !(exportEstimado && d.tipo_volume==='producao')){
+    const share = Math.round((d.preco_produtor_usd_kg/exportPerKg)*100);
+    gapBadge = `<span class="mono text-[10px] px-2 py-1 rounded-full border" style="border-color:var(--gap); color:var(--gap)">${I18N[LANG].gapText(share)}</span>`;
+  }
+
+  const fiabColor = d.fiabilidade==='Oficial' ? 'var(--produtor)' : d.fiabilidade==='Setorial' ? 'var(--export)' : 'var(--muted)';
+  const dict = I18N[LANG];
+
+  return `
+  <div class="card fade-in rounded-2xl p-5">
+    <div class="flex items-start justify-between gap-3 mb-1">
+      <div>
+        <p class="text-xs text-[var(--muted)] mono">${d.bandeira} ${tr(d.pais)}</p>
+        <h2 class="text-lg font-bold leading-snug">${tr(d.produto)}</h2>
+      </div>
+      <span class="mono text-[10px] px-2 py-1 rounded-full border shrink-0" style="border-color:${fiabColor};color:${fiabColor}">${d.fiabilidade}</span>
+    </div>
+
+    <div class="mt-4 space-y-2">
+      <div>
+        <div class="flex justify-between mono text-[11px] text-[var(--muted)] mb-1">
+          <span>${dict.produtor}</span><span>${temProdutor ? '$'+d.preco_produtor_usd_kg.toFixed(2)+'/kg ('+d.preco_produtor+' '+d.unidade_produtor+')' : d.unidade_produtor}</span>
+        </div>
+        <div class="h-2 rounded-full bar-track overflow-hidden"><div class="h-full bar-produtor rounded-full" style="width:${produtorPct}%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between mono text-[11px] text-[var(--muted)] mb-1">
+          <span>${dict.exportacao}${exportEstimado ? ' <span style="color:var(--gap)">≈</span>' : ''}</span>
+          <span>${temExport ? (exportEstimado ? '≈$'+Math.round(exportPerKg*1000).toLocaleString('en-US') : fmtUSD(d.preco_export)+(d.preco_export_max?'–'+fmtUSD(d.preco_export_max):''))+'/t' : d.unidade_export}</span>
+        </div>
+        <div class="h-2 rounded-full bar-track overflow-hidden"><div class="h-full bar-export rounded-full" style="width:${exportPct}%${exportEstimado ? ';opacity:.55;background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.25) 3px,rgba(0,0,0,.25) 6px)' : ''}"></div></div>
+        ${exportEstimado ? `<p class="mono text-[9px] text-[var(--muted)] mt-1">≈ ${LANG==='pt'?'estimado':LANG==='fr'?'estimé':LANG==='zh'?'估算':'estimated'}: ${fmtUSD(d.valor_total_usd)} ÷ ${d.volume_toneladas.toLocaleString('en-US')}t (${d.tipo_volume==='producao'?(LANG==='pt'?'volume de produção, não de exportação — aproximado':LANG==='fr'?'volume de production, pas export — approximatif':LANG==='zh'?'生产量而非出口量-仅供参考':'production volume, not export — approximate'):(LANG==='pt'?'volume de exportação':LANG==='fr'?'volume export':'export volume')})</p>` : ''}
+      </div>
+    </div>
+    ${exportEstimado && d.tipo_volume==='producao' ? `<p class="mono text-[9px] px-2 py-1 rounded-md inline-block mt-1" style="background:rgba(193,91,78,.12); color:var(--gap)">⚠ ${LANG==='pt'?'não é um preço oficial de exportação':LANG==='fr'?"n'est pas un prix export officiel":LANG==='zh'?'并非官方出口价格':'not an official export price'}</p>` : ''}
+
+    <div class="flex flex-wrap items-center gap-2 mt-4">
+      ${gapBadge}
+      <span class="mono text-[10px] text-[var(--muted)]">${d.campanha}</span>
+      <a href="${d.link}" target="_blank" rel="noopener" class="mono text-[10px] underline" style="color:var(--export)">&middot; ${d.fonte}</a>
+    </div>
+    ${d.vendedores ? `<p class="text-xs mt-3"><span class="mono text-[var(--muted)]">${dict.vendedores}:</span> ${d.vendedores} ${d.link_vendedores ? `<a href="${d.link_vendedores}" target="_blank" rel="noopener" class="underline" style="color:var(--produtor)">[${LANG==='pt'?'fonte':LANG==='fr'?'source':LANG==='zh'?'来源':'source'}]</a>` : `<span class="mono text-[10px]" style="color:var(--gap)">[${LANG==='pt'?'não confirmado':LANG==='fr'?'non confirmé':LANG==='zh'?'未证实':'unconfirmed'}]</span>`}</p>` : ''}
+    ${d.compradores ? `<p class="text-xs mt-2"><span class="mono text-[var(--muted)]">${dict.compradores}:</span> ${d.compradores} ${d.link_compradores ? `<a href="${d.link_compradores}" target="_blank" rel="noopener" class="underline" style="color:var(--export)">[${LANG==='pt'?'fonte':LANG==='fr'?'source':LANG==='zh'?'来源':'source'}]</a>` : `<span class="mono text-[10px]" style="color:var(--gap)">[${LANG==='pt'?'não confirmado':LANG==='fr'?'non confirmé':LANG==='zh'?'未证实':'unconfirmed'}]</span>`}</p>` : ''}
+    ${d.estatuto ? `<p class="mono text-[10px] mt-2" style="color:${d.estatuto==='Completo'?'var(--produtor)':d.estatuto==='Parcial'?'var(--export)':'var(--gap)'}">${dict.estatuto}: ${d.estatuto}</p>` : ''}
+    ${d.zona_producao ? `<p class="text-xs mt-3"><span class="mono text-[var(--muted)]">${dict.zona}:</span> ${d.zona_producao}</p>` : ''}
+    ${d.estacao ? `<p class="text-xs mt-1"><span class="mono text-[var(--muted)]">${dict.estacaoLabel}:</span> ${d.estacao}</p>` : ''}
+    ${d.transporte_logistica ? `<p class="text-xs mt-1"><span class="mono text-[var(--muted)]">${dict.transporte}:</span> ${d.transporte_logistica}</p>` : ''}
+    ${d.nota ? `<p class="text-xs text-[var(--muted)] mt-3 leading-relaxed">${d.nota}</p>` : ''}
+  </div>`;
+}
+
+let DADOS = [];
+applyI18n();
+
+let FILTRO_PRODUTO = 'todos';
+
+function render(){
+  const lista = document.getElementById('lista');
+  const vazio = document.getElementById('vazio');
+  const buscaLower = BUSCA.trim().toLowerCase();
+  const items = DADOS.filter(d=>{
+    if(FILTRO_PRODUTO!=='todos' && d.produto!==FILTRO_PRODUTO) return false;
+    if(PAIS_ATIVO!=='todos' && d.pais!==PAIS_ATIVO) return false;
+    if(buscaLower){
+      const alvo = (d.produto+' '+tr(d.produto)+' '+d.pais+' '+tr(d.pais)+' '+(d.fonte||'')).toLowerCase();
+      if(!alvo.includes(buscaLower)) return false;
+    }
+    return true;
+  });
+  lista.innerHTML = items.map(cardHTML).join('');
+  vazio.classList.toggle('hidden', items.length>0);
+}
+
+let FILTROS_BOUND = false;
+function buildFiltros(){
+  const produtos = [...new Set(DADOS.map(d=>d.produto))];
+  const wrap = document.getElementById('filtros');
+  wrap.querySelectorAll('button[data-filtro]:not([data-filtro="todos"])').forEach(b=>b.remove());
+  produtos.forEach(p=>{
+    const b = document.createElement('button');
+    b.className = 'chip shrink-0 px-3 py-1.5 rounded-full text-xs mono' + (p===FILTRO_PRODUTO?' active':'');
+    b.textContent = tr(p);
+    b.dataset.filtro = p;
+    wrap.appendChild(b);
+  });
+  if(!FILTROS_BOUND){
+    wrap.addEventListener('click', e=>{
+      const btn = e.target.closest('button[data-filtro]');
